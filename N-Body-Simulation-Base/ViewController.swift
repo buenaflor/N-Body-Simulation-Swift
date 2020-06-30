@@ -9,19 +9,36 @@
 import Cocoa
 
 class ViewController: NSViewController {
-
+  
+  @IBOutlet var simulationView: SimulationView!
+  
   override func viewDidLoad() {
     super.viewDidLoad()
-
-    // Do any additional setup after loading the view.
+    
+    simulationView.wantsLayer = true
+    simulationView.layer?.backgroundColor = NSColor.black.cgColor
+    
+    NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask.keyDown, handler: myKeyDownEvent)
+    
+    let simulation = Simulation(simulationView: simulationView)
+    simulation.start()
   }
-
-  override var representedObject: Any? {
-    didSet {
-    // Update the view, if already loaded.
+  
+  func myKeyDownEvent(event: NSEvent) -> NSEvent {
+    if event.characters ?? "" == "s" {
+      simulationView.drawLeafQuadsEnabled = !simulationView.drawLeafQuadsEnabled
     }
+    if event.characters ?? "" == "q" {
+      simulationView.drawAllQuadsEnabled = !simulationView.drawAllQuadsEnabled
+    }
+    if event.characters ?? "" == "+" {
+      simulationView.dt += 0.1
+    }
+    if event.characters ?? "" == "-" {
+      simulationView.dt -= 0.1
+    }
+    return event
   }
-
-
+  
 }
 
